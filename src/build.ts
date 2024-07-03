@@ -20,14 +20,20 @@ export async function build() {
     process.exit(1);
   }
 
-  // Create WEB-INF/classes folder
-  await mkdir(`${pwd}/WEB-INF/classes`, { recursive: true });
-  // Move lib folder to WEB-INF
-  await cp(`${pwd}/lib`, `${pwd}/WEB-INF/lib`, { recursive: true });
-
-  // Compile servlet files
-  await $`javac -cp lib/* -d WEB-INF/classes src/**/*.java`;
-
-  // Show success message
-  loader.succeed("Project servlets built!");
+  try {
+    // Check if has java installed
+    await $`which javac`.quiet()
+    
+    // Create WEB-INF/classes folder
+    await mkdir(`${pwd}/WEB-INF/classes`, { recursive: true });
+    // Move lib folder to WEB-INF
+    await cp(`${pwd}/lib`, `${pwd}/WEB-INF/lib`, { recursive: true });
+    // Compile servlet files
+    await $`javac -cp lib/* -d WEB-INF/classes src/**/*.java`;
+    
+    // Show success message
+    loader.succeed("Project servlets built!");
+  } catch (error) {
+    loader.fail("Java is required to build servlet projects.");
+  }
 }
