@@ -9,7 +9,14 @@ import ora from "ora";
  */
 export async function create(name: string, options: Record<string, string>) {
   // Loader
-  const loader = ora(`Creating project (${options.org})...`).start();
+  const loader = ora(`Creating project (${name})...`).start();
+
+  // If no org is provided
+  if (!options.org) {
+    loader.fail("Organization name is required.");
+    process.exit(1);
+  }
+
   // Source directory
   const source = "src";
   // Lib folder
